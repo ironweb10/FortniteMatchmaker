@@ -4,7 +4,7 @@ const crypto = require("crypto");
 
 // Start listening websocket on port
 const port = 7777;
-const wss = new WebSocket({ port: port }, console.log(Server, "Matchmaker started listening on port", port));
+const wss = new WebSocket({ port: process.env.PORT || port }, console.log(Server, "Matchmaker started listening on port", process.env.PORT || port));
 
 wss.on('connection', async (ws) => {
     if (ws.protocol.toLowerCase().includes("xmpp")) {
