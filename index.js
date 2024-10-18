@@ -2,21 +2,39 @@ const WebSocket = require('ws').Server;
 const Server = '[SERVER]';
 const crypto = require("crypto");
 
-// Start listening websocket on port
-const port = 7777;
-const wss = new WebSocket({ port: process.env.PORT || port }, console.log(Server, "Matchmaker started listening on port", process.env.PORT || port));
+// Configura los puertos
+const port1 = 7777;
+const port2 = 8888;
 
-wss.on('connection', async (ws) => {
+// Inicia el primer WebSocket Server
+const wss1 = new WebSocket({ port: process.env.PORT1 || port1 }, () => {
+    console.log(Server, "Matchmaker started listening on port", process.env.PORT1 || port1);
+});
+
+wss1.on('connection', async (ws) => {
+    handleConnection(ws);
+});
+
+// Inicia el segundo WebSocket Server
+const wss2 = new WebSocket({ port: process.env.PORT2 || port2 }, () => {
+    console.log(Server, "Matchmaker started listening on port", process.env.PORT2 || port2);
+});
+
+wss2.on('connection', async (ws) => {
+    handleConnection(ws);
+});
+
+function handleConnection(ws) {
     if (ws.protocol.toLowerCase().includes("xmpp")) {
         return ws.close();
     }
 
-    // create hashes
+    // Crea hashes
     const ticketId = crypto.createHash('md5').update(`1${Date.now()}`).digest('hex');
     const matchId = crypto.createHash('md5').update(`2${Date.now()}`).digest('hex');
     const sessionId = crypto.createHash('md5').update(`3${Date.now()}`).digest('hex');
 
-    // you can use setTimeout to send the websocket messages at certain times
+    // Enviar mensajes a través del WebSocket
     Connecting();
     Waiting();
     Queued();
@@ -76,6 +94,11 @@ wss.on('connection', async (ws) => {
             "name": "Play"
         }));
     }
+
+    ws.on('message', function incoming(message) {
+        console.log(Server, 'A client sent a message:', message);
+    });
+}
 
     ws.on('message', function incoming(message) {
         console.log(Server, 'A client sent a message:', message);
