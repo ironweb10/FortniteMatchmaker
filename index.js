@@ -100,7 +100,3 @@ function handleConnection(ws) {
     });
 }
 
-    ws.on('message', function incoming(message) {
-        console.log(Server, 'A client sent a message:', message);
-    });
-});
