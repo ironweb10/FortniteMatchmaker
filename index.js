@@ -1,24 +1,22 @@
-const WebSocket = require('ws').Server;
+const WebSocketServer = require('ws').Server;
 const Server = '[SERVER]';
 const crypto = require("crypto");
 
-// Configura los puertos
+// Configure the ports
 const port1 = 7777;
 const port2 = 8888;
 
-// Inicia el primer WebSocket Server
-const wss1 = new WebSocket({ port: process.env.PORT1 || port1 }, () => {
-    console.log(Server, "Matchmaker started listening on port", process.env.PORT1 || port1);
-});
+// Start the first WebSocket server
+const wss1 = new WebSocketServer({ port: process.env.PORT1 || port1 });
+console.log(Server, "Matchmaker started listening on port", process.env.PORT1 || port1);
 
 wss1.on('connection', async (ws) => {
     handleConnection(ws);
 });
 
-// Inicia el segundo WebSocket Server
-const wss2 = new WebSocket({ port: process.env.PORT2 || port2 }, () => {
-    console.log(Server, "Matchmaker started listening on port", process.env.PORT2 || port2);
-});
+// Start the second WebSocket server
+const wss2 = new WebSocketServer({ port: process.env.PORT2 || port2 });
+console.log(Server, "Matchmaker started listening on port", process.env.PORT2 || port2);
 
 wss2.on('connection', async (ws) => {
     handleConnection(ws);
@@ -29,12 +27,12 @@ function handleConnection(ws) {
         return ws.close();
     }
 
-    // Crea hashes
+    // Create hashes
     const ticketId = crypto.createHash('md5').update(`1${Date.now()}`).digest('hex');
     const matchId = crypto.createHash('md5').update(`2${Date.now()}`).digest('hex');
     const sessionId = crypto.createHash('md5').update(`3${Date.now()}`).digest('hex');
 
-    // Enviar mensajes a través del WebSocket
+    // Send messages via WebSocket
     Connecting();
     Waiting();
     Queued();
@@ -99,4 +97,3 @@ function handleConnection(ws) {
         console.log(Server, 'A client sent a message:', message);
     });
 }
-
