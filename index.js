@@ -2,11 +2,9 @@ const WebSocketServer = require('ws').Server;
 const Server = '[SERVER]';
 const crypto = require("crypto");
 
-// Configure the ports
 const port1 = 7777;
 const port2 = 8888;
 
-// Start the first WebSocket server
 const wss1 = new WebSocketServer({ port: process.env.PORT1 || port1 });
 console.log(Server, "Matchmaker started listening on port", process.env.PORT1 || port1);
 
@@ -14,7 +12,6 @@ wss1.on('connection', async (ws) => {
     handleConnection(ws);
 });
 
-// Start the second WebSocket server
 const wss2 = new WebSocketServer({ port: process.env.PORT2 || port2 });
 console.log(Server, "Matchmaker started listening on port", process.env.PORT2 || port2);
 
@@ -27,12 +24,10 @@ function handleConnection(ws) {
         return ws.close();
     }
 
-    // Create hashes
     const ticketId = crypto.createHash('md5').update(`1${Date.now()}`).digest('hex');
     const matchId = crypto.createHash('md5').update(`2${Date.now()}`).digest('hex');
     const sessionId = crypto.createHash('md5').update(`3${Date.now()}`).digest('hex');
 
-    // Send messages via WebSocket
     Connecting();
     Waiting();
     Queued();
